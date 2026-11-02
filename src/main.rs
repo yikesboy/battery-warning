@@ -3,7 +3,7 @@ use battery_notification_util::{config::Config, listener};
 use clap::Parser;
 use tokio::signal::unix::{SignalKind, signal};
 
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     let config = Config::parse();
     config.validate()?;

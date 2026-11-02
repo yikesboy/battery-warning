@@ -12,7 +12,7 @@ anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 futures-util = "0.3"
 thiserror = "2"
-tokio = { version = "1", features = ["macros", "rt-multi-thread", "process", "signal", "time", "sync", "io-util", "net"] }
+tokio = { version = "1", features = ["macros", "rt", "process", "signal", "time", "sync", "io-util", "net"] }
 zbus = { version = "5", default-features = false, features = ["tokio"] }
 
 [dev-dependencies]
