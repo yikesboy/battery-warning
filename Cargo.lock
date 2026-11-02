@@ -105,6 +105,7 @@ dependencies = [
  "anyhow",
  "clap",
  "futures-util",
+ "tempfile",
  "tokio",
  "zbus",
 ]
