@@ -28,8 +28,8 @@ nix flake check
 | Option                   | Meaning                                                        |
 | ------------------------ | -------------------------------------------------------------- |
 | `--zenity PATH`          | Absolute path to a GTK 4 Zenity executable. Required.          |
-| `--low-theme DIR`        | Theme directory containing `gtk-4.0/gtk.css`. Required.        |
-| `--critical-theme DIR`   | Theme directory for the critical dialog. Required.             |
+| `--low-theme DIR`        | Low warning theme directory. Required.                         |
+| `--critical-theme DIR`   | Critical warning theme directory. Required.                    |
 | `--low-threshold N`      | Warn at or below this percentage. Default `15`.                |
 | `--critical-threshold N` | Critical warning at or below this percentage. Default `5`.     |
 | `--rearm-threshold N`    | Warnings reset once the battery goes above this. Default `20`. |
@@ -37,23 +37,30 @@ nix flake check
 Thresholds have to be `0 <= critical < low < rearm <= 100`.
 
 Each dialog runs with its theme directory as `XDG_CONFIG_HOME`.
-GTK loads that severity's `gtk-4.0/gtk.css`.
+GTK reads `gtk-4.0/gtk.css` from that directory.
 
-## Home Manager example
+## NixOS and Home Manager
 
-Add the input to your flake without a `follows` for nixpkgs.
+1. Add the flake input. Keep its own nixpkgs pin (no `follows`).
 
 ```nix
 inputs.battery-warning.url = "github:yikesboy/battery-warning";
 ```
 
-Then add this module, with `inputs` passed through
-`home-manager.extraSpecialArgs`.
+2. Enable UPower and pass `inputs` to Home Manager in your NixOS configuration:
+
+```nix
+services.upower.enable = true;
+home-manager.extraSpecialArgs = { inherit inputs; };
+```
+
+3. Add this Home Manager module:
 
 ```nix
 { inputs, pkgs, lib, ... }:
 let
   batteryWarning = inputs.battery-warning.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  theme = pkgs.writeTextDir "gtk-4.0/gtk.css" "";
 in {
   systemd.user.services.battery-warning = {
     Unit = {
@@ -66,8 +73,8 @@ in {
       ExecStart = lib.escapeShellArgs [
         "${batteryWarning}/bin/battery-warning"
         "--zenity" "${pkgs.zenity}/bin/zenity"
-        "--low-theme" "${./themes/battery-low}"
-        "--critical-theme" "${./themes/battery-critical}"
+        "--low-theme" "${theme}"
+        "--critical-theme" "${theme}"
       ];
       Restart = "on-failure";
       RestartSec = "5s";
@@ -76,6 +83,8 @@ in {
 }
 ```
 
-You'll also need UPower enabled on the system, and your compositor must start
-`graphical-session.target` and pass its display environment to the systemd user
-manager.
+4. Ensure your desktop manages `graphical-session.target` and supplies its display
+   environment to the systemd user manager.
+
+5. Rebuild your NixOS configuration and log out and back in. The service starts
+   and stops with your graphical session.
