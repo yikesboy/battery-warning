@@ -59,7 +59,10 @@ impl Dialog {
                     "--width=420",
                     "--no-wrap",
                 ])
-                .env("XDG_CONFIG_HOME", theme)
+                .env(
+                    "XDG_CONFIG_HOME",
+                    std::path::absolute(theme).map_err(DialogError::Spawn)?,
+                )
                 .kill_on_drop(true)
                 .spawn()
                 .map_err(DialogError::Spawn)?,
@@ -84,9 +87,7 @@ impl Dialog {
         if let Some(mut child) = self.child.take() {
             // This wait belongs exclusively to the intentionally killed child. No old
             // completion callback can clear a subsequently spawned replacement.
-            child
-                .start_kill()
-                .map_err(DialogError::Terminate)?;
+            child.start_kill().map_err(DialogError::Terminate)?;
             timeout(Duration::from_secs(2), child.wait())
                 .await
                 .map_err(|_| DialogError::ReapTimeout)?
