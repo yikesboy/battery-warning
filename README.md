@@ -1,5 +1,7 @@
 # Battery Warning
 
+[![CI](https://github.com/yikesboy/battery-warning/actions/workflows/ci.yml/badge.svg)](https://github.com/yikesboy/battery-warning/actions/workflows/ci.yml)
+
 An event-driven Linux user-session listener that watches UPower over the system
 D-Bus and pops up Zenity warnings when the battery gets low.
 
