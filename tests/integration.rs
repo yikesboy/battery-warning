@@ -14,6 +14,9 @@ use std::{
 use battery_notification_util::upower;
 use tokio::time::timeout;
 
+#[path = "cases/lifecycle.rs"]
+mod lifecycle;
+
 #[tokio::test]
 async fn missing_required_property_fails_initial_snapshot() {
     let bus = Bus::new();
