@@ -1,5 +1,8 @@
 use battery_notification_util::policy::*;
 
+#[path = "cases/policy_cycles.rs"]
+mod policy_cycles;
+
 #[test]
 fn custom_threshold_boundaries() {
     let thresholds = Thresholds {
