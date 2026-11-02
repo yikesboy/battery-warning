@@ -7,3 +7,4 @@ edition = "2024"
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 futures-util = "0.3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "process", "signal", "time", "sync", "io-util", "net"] }
