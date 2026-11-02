@@ -44,7 +44,7 @@ GTK loads that severity's `gtk-4.0/gtk.css`.
 Add the input to your flake without a `follows` for nixpkgs.
 
 ```nix
-inputs.battery-warning.url = "github:YOUR-ORG/battery-notification-util";
+inputs.battery-warning.url = "github:yikesboy/battery-warning";
 ```
 
 Then add this module, with `inputs` passed through
